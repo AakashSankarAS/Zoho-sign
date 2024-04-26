@@ -8,6 +8,7 @@ const app = express();
 const port = 4000;
 app.use(cors());
 app.get("/", async (req, res) => {
+  console.log("in the function");
   let actionsJson = {};
   actionsJson["recipient_name"] = "aakash";
   actionsJson["recipient_email"] = "aakashsankar412@gmail.com";
@@ -143,6 +144,9 @@ app.get("/", async (req, res) => {
       errorResponse["status"] = "failure";
       return errorResponse;
     });
+});
+app.get("/hello", (req, res) => {
+  res.send("Hello World");
 });
 app.listen(port, () => {
   console.log(`Example app listening on port  {port}`);

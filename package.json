@@ -6,14 +6,10 @@
     "express-cors": "^0.0.3",
     "form-data": "^4.0.0",
     "fs": "^0.0.1-security",
-    "netlify-cli": "^17.23.0",
-    "netlify-lambda": "^2.0.16",
     "node-fetch": "^2.7.0",
     "path": "^0.12.7",
     "request": "^2.88.2",
     "serverless-http": "^3.2.0"
   },
-  "scripts": {
-    "build": "netlify deploy --prod"
-  }
+  "scripts": {}
 }
