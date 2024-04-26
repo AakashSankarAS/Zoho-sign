@@ -7,7 +7,7 @@ const cors = require("cors");
 const app = express();
 const port = 4000;
 app.use(cors());
-app.get("/", async (req, res) => {
+app.get("/auth", async (req, res) => {
   console.log("in the function");
   let actionsJson = {};
   actionsJson["recipient_name"] = "aakash";
@@ -42,7 +42,7 @@ app.get("/", async (req, res) => {
   payload.append("data", JSON.stringify(data));
   let HEADERS = {};
   HEADERS["Authorization"] =
-    "Zoho-oauthtoken 1000.fbcd857de59b5ea2e97dc8613e8950c3.484c19e4d07c7d8726d60db0604a3e31";
+    "Zoho-oauthtoken 1000.c3a11d02149ac6910513763d33d9ceae.ca287627b3d0eda75079127e1272557c";
 
   let URL = "https://sign.zoho.in/api/v1/requests";
   let method = "POST";
@@ -145,7 +145,7 @@ app.get("/", async (req, res) => {
       return errorResponse;
     });
 });
-app.get("/hello", (req, res) => {
+app.get("/", (req, res) => {
   res.send("Hello World");
 });
 app.listen(port, () => {
