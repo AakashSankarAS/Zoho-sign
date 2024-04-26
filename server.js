@@ -8,7 +8,6 @@ const app = express();
 const port = 4000;
 app.use(cors());
 app.get("/auth", async (req, res) => {
-  console.log("in the function");
   let actionsJson = {};
   actionsJson["recipient_name"] = "aakash";
   actionsJson["recipient_email"] = "aakashsankar412@gmail.com";
@@ -82,10 +81,10 @@ app.get("/auth", async (req, res) => {
   fieldJson["field_label"] = "Text - 1";
   fieldJson["field_category"] = "Signature";
   fieldJson["abs_width"] = "200";
-  fieldJson["abs_height"] = "18";
+  fieldJson["abs_height"] = "40";
   fieldJson["is_mandatory"] = true;
-  fieldJson["x_coord"] = "30";
-  fieldJson["y_coord"] = "30";
+  fieldJson["x_coord"] = "300";
+  fieldJson["y_coord"] = "-300";
   fieldJson["page_no"] = 0;
 
   actionsJson1["fields"] = new Array(fieldJson);
