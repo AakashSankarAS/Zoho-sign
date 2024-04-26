@@ -30,7 +30,7 @@ app.get("/auth", async (req, res) => {
   let data = {};
   data["requests"] = documentJson;
 
-  let files = ["C:/Users/USER/Desktop/Zoho-sign/doc.pdf"];
+  let files = ["doc.pdf"];
   var payload = new FormData();
   if (fs.existsSync(files[0])) {
     let value = fs.createReadStream(files[0]);
