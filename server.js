@@ -83,8 +83,8 @@ app.get("/auth", async (req, res) => {
   fieldJson["abs_width"] = "200";
   fieldJson["abs_height"] = "40";
   fieldJson["is_mandatory"] = true;
-  fieldJson["x_coord"] = "300";
-  fieldJson["y_coord"] = "300";
+  fieldJson["x_coord"] = "350";
+  fieldJson["y_coord"] = "550";
   fieldJson["page_no"] = 0;
 
   actionsJson1["fields"] = new Array(fieldJson);
