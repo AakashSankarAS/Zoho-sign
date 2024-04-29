@@ -20,7 +20,7 @@ var name;
 // const uploadStorage = multer({ storage: storage });
 // uploadStorage.single("file")
 app.use(cors());
-app.post("/auth", async (req, res) => {
+app.get("/auth", async (req, res) => {
   let actionsJson = {};
   actionsJson["recipient_name"] = "aakash";
   actionsJson["recipient_email"] = "aakashsankar412@gmail.com";
