@@ -8,18 +8,19 @@ const cors = require("cors");
 const app = express();
 const port = 4000;
 var name;
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "docs/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, (name = Date.now() + "-" + file.originalname));
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "docs/");
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, (name = Date.now() + "-" + file.originalname));
+//   },
+// });
 
-const uploadStorage = multer({ storage: storage });
+// const uploadStorage = multer({ storage: storage });
+// uploadStorage.single("file")
 app.use(cors());
-app.post("/auth", uploadStorage.single("file"), async (req, res) => {
+app.post("/auth", async (req, res) => {
   let actionsJson = {};
   actionsJson["recipient_name"] = "aakash";
   actionsJson["recipient_email"] = "aakashsankar412@gmail.com";
@@ -41,7 +42,7 @@ app.post("/auth", uploadStorage.single("file"), async (req, res) => {
   let data = {};
   data["requests"] = documentJson;
 
-  let files = [`docs/${name}`];
+  let files = [`docs/1714395416282-doc.pdf`];
   var payload = new FormData();
   if (fs.existsSync(files[0])) {
     let value = fs.createReadStream(files[0]);
