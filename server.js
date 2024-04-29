@@ -1,4 +1,5 @@
 const express = require("express");
+const multer = require("multer");
 const fs = require("fs");
 const FormData = require("form-data");
 const fetch = require("node-fetch");
@@ -6,8 +7,19 @@ const path = require("path");
 const cors = require("cors");
 const app = express();
 const port = 4000;
+var name;
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "docs/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, (name = Date.now() + "-" + file.originalname));
+  },
+});
+
+const uploadStorage = multer({ storage: storage });
 app.use(cors());
-app.get("/auth", async (req, res) => {
+app.post("/auth", uploadStorage.single("file"), async (req, res) => {
   let actionsJson = {};
   actionsJson["recipient_name"] = "aakash";
   actionsJson["recipient_email"] = "aakashsankar412@gmail.com";
@@ -29,11 +41,10 @@ app.get("/auth", async (req, res) => {
   let data = {};
   data["requests"] = documentJson;
 
-  let files = ["doc.pdf"];
+  let files = [`docs/${name}`];
   var payload = new FormData();
   if (fs.existsSync(files[0])) {
     let value = fs.createReadStream(files[0]);
-
     payload.append("file", value);
   } else {
     return "unable to read file";
@@ -41,8 +52,7 @@ app.get("/auth", async (req, res) => {
   payload.append("data", JSON.stringify(data));
   let HEADERS = {};
   HEADERS["Authorization"] =
-    "Zoho-oauthtoken 1000.be672b98f89c0eb0b1e42b43d295ef4a.0f1327ed4febd0a6e8b3fa64d47bcebb";
-
+    "Zoho-oauthtoken 1000.eecc328a0528eafe4e647f76ca65c3bb.50d5c575bbac699b68deed3dbcadc47f";
   let URL = "https://sign.zoho.in/api/v1/requests";
   let method = "POST";
   let requestOptions = {
@@ -148,5 +158,5 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 app.listen(port, () => {
-  console.log(`Example app listening on port  {port}`);
+  console.log(`Example app listening on port  ${port}`);
 });
