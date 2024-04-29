@@ -8,19 +8,18 @@ const cors = require("cors");
 const app = express();
 const port = 4000;
 var name;
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "docs/");
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, (name = Date.now() + "-" + file.originalname));
-//   },
-// });
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "docs/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, (name = Date.now() + "-" + file.originalname));
+  },
+});
 
-// const uploadStorage = multer({ storage: storage });
-// uploadStorage.single("file")
+const uploadStorage = multer({ storage: storage });
 app.use(cors());
-app.get("/auth", async (req, res) => {
+app.post("/auth", uploadStorage.single("file"), async (req, res) => {
   let actionsJson = {};
   actionsJson["recipient_name"] = "aakash";
   actionsJson["recipient_email"] = "aakashsankar412@gmail.com";
@@ -42,7 +41,7 @@ app.get("/auth", async (req, res) => {
   let data = {};
   data["requests"] = documentJson;
 
-  let files = [`docs/1714395416282-doc.pdf`];
+  let files = [`docs/${name}`];
   var payload = new FormData();
   if (fs.existsSync(files[0])) {
     let value = fs.createReadStream(files[0]);
@@ -53,7 +52,7 @@ app.get("/auth", async (req, res) => {
   payload.append("data", JSON.stringify(data));
   let HEADERS = {};
   HEADERS["Authorization"] =
-    "Zoho-oauthtoken 1000.eecc328a0528eafe4e647f76ca65c3bb.50d5c575bbac699b68deed3dbcadc47f";
+    "Zoho-oauthtoken 1000.bb521b1dc32767f5a14c7c76bea39603.53ea43df6ee530c26c40d5bd97123099";
   let URL = "https://sign.zoho.in/api/v1/requests";
   let method = "POST";
   let requestOptions = {
