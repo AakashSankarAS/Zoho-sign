@@ -8,6 +8,7 @@ const cors = require("cors");
 const app = express();
 const port = 4000;
 var name;
+var token;
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "docs/");
@@ -16,7 +17,16 @@ const storage = multer.diskStorage({
     cb(null, (name = Date.now() + "-" + file.originalname));
   },
 });
-
+const authToken = async () => {
+  token = await fetch(
+    "https://accounts.zoho.in/oauth/v2/token?refresh_token=1000.46a17206c94f589defcbc91fc8455b41.f110d6f6dbd852665d2f49615902a372&client_id=1000.IRWFTKA2Y2LGAHCKKCLGKF7VLQT6QX&client_secret=cee41129543eb3e89bc0af8db9fda7f9cdbcd20f60&redirect_uri=https%3A%2F%2Fsign.zoho.com&grant_type=refresh_token",
+    { method: "POST" }
+  )
+    .then((elem) => elem.json())
+    .then((data) => data);
+};
+authToken();
+setInterval(authToken, 1000 * 60 * 59);
 const uploadStorage = multer({ storage: storage });
 app.use(cors());
 app.post("/auth", uploadStorage.single("file"), async (req, res) => {
@@ -51,8 +61,7 @@ app.post("/auth", uploadStorage.single("file"), async (req, res) => {
   }
   payload.append("data", JSON.stringify(data));
   let HEADERS = {};
-  HEADERS["Authorization"] =
-    "Zoho-oauthtoken 1000.bb521b1dc32767f5a14c7c76bea39603.53ea43df6ee530c26c40d5bd97123099";
+  HEADERS["Authorization"] = `Zoho-oauthtoken ${token.access_token}`;
   let URL = "https://sign.zoho.in/api/v1/requests";
   let method = "POST";
   let requestOptions = {
