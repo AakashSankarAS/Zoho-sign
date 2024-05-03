@@ -1,12 +1,21 @@
 const express = require("express");
+const nodemailer = require("nodemailer");
 const multer = require("multer");
 const fs = require("fs");
 const FormData = require("form-data");
 const fetch = require("node-fetch");
 const path = require("path");
 const cors = require("cors");
+const dotenv = require("dotenv");
+const bodyParser = require("body-parser");
+
 const app = express();
-const port = 4000;
+dotenv.config();
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 var name;
 var token;
 const storage = multer.diskStorage({
@@ -17,9 +26,16 @@ const storage = multer.diskStorage({
     cb(null, (name = Date.now() + "-" + file.originalname));
   },
 });
+
 const authToken = async () => {
   token = await fetch(
-    "https://accounts.zoho.in/oauth/v2/token?refresh_token=1000.46a17206c94f589defcbc91fc8455b41.f110d6f6dbd852665d2f49615902a372&client_id=1000.IRWFTKA2Y2LGAHCKKCLGKF7VLQT6QX&client_secret=cee41129543eb3e89bc0af8db9fda7f9cdbcd20f60&redirect_uri=https%3A%2F%2Fsign.zoho.com&grant_type=refresh_token",
+    "https://accounts.zoho.in/oauth/v2/token?refresh_token=" +
+      process.env.RFToken +
+      "&client_id=" +
+      process.env.CId +
+      "&client_secret=" +
+      process.env.CSecret +
+      "&redirect_uri=https%3A%2F%2Fsign.zoho.com&grant_type=refresh_token",
     { method: "POST" }
   )
     .then((elem) => elem.json())
@@ -29,6 +45,19 @@ authToken();
 setInterval(authToken, 1000 * 60 * 59);
 const uploadStorage = multer({ storage: storage });
 app.use(cors());
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  port: 25,
+  secure: false,
+  auth: {
+    user: "aakashsankar412@gmail.com",
+    pass: "jjktrrckuhwznvhn",
+  },
+  tls: {
+    rejectUnauthorized: false,
+  },
+});
 app.post("/auth", uploadStorage.single("file"), async (req, res) => {
   let actionsJson = {};
   actionsJson["recipient_name"] = "aakash";
@@ -119,6 +148,7 @@ app.post("/auth", uploadStorage.single("file"), async (req, res) => {
     headers: HEADERS,
     body: payload1,
   };
+
   let response1 = await fetch(URL1, requestOptions1)
     .then((_res1) => {
       console.log(`Return code is ${_res1.status}`);
@@ -152,20 +182,56 @@ app.post("/auth", uploadStorage.single("file"), async (req, res) => {
       return _res1.json().then((responseJson1) => {
         let data = {
           url: responseJson1.sign_url,
+          req_id: request_id,
         };
         res.send(data);
       });
     })
     .catch((error) => {
       let errorResponse = {};
-      errorResponse["message"] = "call failed to initiate"; //check internet connection or proper DC type
+      errorResponse["message"] = "call failed to initiate";
       errorResponse["status"] = "failure";
       return errorResponse;
     });
 });
+app.get("/getdocument", async (req, res) => {
+  let ID = req.query.id;
+  const document = await fetch(
+    "https://sign.zoho.in/api/v1/requests/" + ID + "/pdf",
+    {
+      headers: {
+        Authorization: `Zoho-oauthtoken ${token.access_token}`,
+      },
+    }
+  );
+  const blob = await document.buffer();
+
+  const base = blob.toString("base64");
+
+  res.send({ pdf: base });
+});
+app.post("/sendmail", (req, res) => {
+  const mailOptions = {
+    from: "aakashsankar412@gmail.com",
+    to: req.body.to,
+    subject: req.body.subject,
+    html: req.body.html,
+  };
+
+  transporter.sendMail(mailOptions, (error) => {
+    if (error) {
+      return res.status(500).send(error);
+    }
+    res
+      .status(200)
+      .send({ statuscode: 200, message: "Email sent successfully" });
+  });
+});
+
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
-app.listen(port, () => {
-  console.log(`Example app listening on port  ${port}`);
+
+app.listen(process.env.Port, () => {
+  console.log(`Example app listening on port  ${process.env.Port}`);
 });
