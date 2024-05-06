@@ -124,10 +124,10 @@ app.post("/auth", uploadStorage.single("file"), async (req, res) => {
 
   let fieldJson = {};
   fieldJson["document_id"] = response.document_ids[0].document_id;
-  fieldJson["field_name"] = "Signature";
-  fieldJson["field_type_name"] = "Signature";
+  fieldJson["field_name"] = "Image";
+  fieldJson["field_type_name"] = "Image";
   fieldJson["field_label"] = "Text - 1";
-  fieldJson["field_category"] = "Signature";
+  fieldJson["field_category"] = "Image";
   fieldJson["abs_width"] = "200";
   fieldJson["abs_height"] = "40";
   fieldJson["is_mandatory"] = true;
